@@ -16,10 +16,11 @@ token = "2075108574:AAHqeuLvaUv3t3zkd2O9CBqdqdeLCfKkNSo"
 bot = telebot.TeleBot(token)
 
 keyboard1 = telebot.types.ReplyKeyboardMarkup()
-keyboard1.row("Поменять неделю")
 keyboard1.row("Понедельник", "Вторник")
 keyboard1.row("Среда", "Четверг")
 keyboard1.row("Пятница")
+keyboard1.row("Расписание на текущую неделю")
+keyboard1.row("Расписание на следующую неделю")
 keyboard1.row("/help")
 
 
@@ -48,18 +49,200 @@ def start_message(message):
 @bot.message_handler(content_types=['text'], )
 def manipulator(message):
 	global c, keyboard0, keyboard1
-	if message.text == 'Поменять неделю' and c == 0:
-		c = 1
-		bot.send_message(message.chat.id, 'Установлена нечетная неделя')
-	elif message.text == 'Поменять неделю' and c == 1:
-		c = 0
-		bot.send_message(message.chat.id, 'Установлена четная неделя')
+	if message.text == 'Расписание на текущую неделю' and c == 0:
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Понедельник' AND timetable.weektype = 0 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 = str('Понедельник, дистанционный режим\n\n')
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Вторник' AND timetable.weektype = 0 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 += 'Вторник, дистанционный режим\n\n'
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Среда' AND timetable.weektype = 0 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 += 'Среда, дистанционный режим\n\n'
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Четверг' AND timetable.weektype = 0 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 += 'Четверг, метро Авиамоторная\n\n'
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Пятница' AND timetable.weektype = 0 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 += 'Пятница, метро Октябрьское поле\n\n'
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		bot.send_message(message.chat.id, out1)
+	elif message.text == 'Расписание на следующую неделю' and c == 0:
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Понедельник' AND timetable.weektype = 1 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 = str('Понедельник, дистанционный режим\n\n')
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Вторник' AND timetable.weektype = 1 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 += 'Вторник, дистанционный режим\n\n'
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Среда' AND timetable.weektype = 1 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 += 'Среда, дистанционный режим\n\n'
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Четверг' AND timetable.weektype = 1 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 += 'Четверг, метро Авиамоторная\n\n'
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Пятница' AND timetable.weektype = 1 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 += 'Пятница, метро Октябрьское поле\n\n'
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		bot.send_message(message.chat.id, out1)
+	elif message.text == 'Расписание на текущую неделю' and c == 1:
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Понедельник' AND timetable.weektype = 1 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 = str('Понедельник, дистанционный режим\n\n')
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Вторник' AND timetable.weektype = 1 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 += 'Вторник, дистанционный режим\n\n'
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Среда' AND timetable.weektype = 1 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 += 'Среда, дистанционный режим\n\n'
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Четверг' AND timetable.weektype = 1 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 += 'Четверг, метро Авиамоторная\n\n'
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Пятница' AND timetable.weektype = 1 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 += 'Пятница, метро Октябрьское поле\n\n'
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		bot.send_message(message.chat.id, out1)
+	elif message.text == 'Расписание на следующую неделю' and c == 1:
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Понедельник' AND timetable.weektype = 0 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 = str('Понедельник, дистанционный режим\n\n')
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Вторник' AND timetable.weektype = 0 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 += 'Вторник, дистанционный режим\n\n'
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Среда' AND timetable.weektype = 0 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 += 'Среда, дистанционный режим\n\n'
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Четверг' AND timetable.weektype = 0 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 += 'Четверг, метро Авиамоторная\n\n'
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Пятница' AND timetable.weektype = 0 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 += 'Пятница, метро Октябрьское поле\n\n'
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		bot.send_message(message.chat.id, out1)
 	elif message.text == 'Понедельник' and c == 0:
 		cursor.execute("SELECT timetable.subject, teacher.full_name, "
 					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
 					   "teacher.id WHERE timetable.day = 'Понедельник' AND timetable.weektype = 0 ORDER BY timetable.start_time;")
 		out = cursor.fetchall()
-		out1 = str('метро Октябрьское поле, четная неделя\n\n')
+		out1 = str('Дистанционный режим, четная неделя\n\n')
 		for row in out:
 			for i in range(4):
 				out1 += str(row[i]) + '\n'
@@ -70,7 +253,7 @@ def manipulator(message):
 					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
 					   "teacher.id WHERE timetable.day = 'Понедельник' AND timetable.weektype = 1 ORDER BY timetable.start_time;")
 		out = cursor.fetchall()
-		out1 = str('метро Октябрьское поле, нечетная неделя\n\n')
+		out1 = str('Дистанционный режим, нечетная неделя\n\n')
 		for row in out:
 			for i in range(4):
 				out1 += str(row[i]) + '\n'
@@ -81,20 +264,29 @@ def manipulator(message):
 					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
 					   "teacher.id WHERE timetable.day = 'Вторник' AND timetable.weektype = 0 ORDER BY timetable.start_time;")
 		out = cursor.fetchall()
-		out1 = str('метро Авиамоторная, четная неделя\n\n')
+		out1 = str('Дистанционный режим, четная неделя\n\n')
 		for row in out:
 			for i in range(4):
 				out1 += str(row[i]) + '\n'
 			out1 += '\n'
 		bot.send_message(message.chat.id, out1)
 	elif message.text == 'Вторник' and c == 1:
-		bot.send_message(message.chat.id, 'Выходной!')
+		cursor.execute("SELECT timetable.subject, teacher.full_name, "
+					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
+					   "teacher.id WHERE timetable.day = 'Вторник' AND timetable.weektype = 1 ORDER BY timetable.start_time;")
+		out = cursor.fetchall()
+		out1 = str('Дистанционный режим, нечетная неделя\n\n')
+		for row in out:
+			for i in range(4):
+				out1 += str(row[i]) + '\n'
+			out1 += '\n'
+		bot.send_message(message.chat.id, out1)
 	elif message.text == 'Среда' and c == 0:
 		cursor.execute("SELECT timetable.subject, teacher.full_name, "
 					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
 					   "teacher.id WHERE timetable.day = 'Среда' AND timetable.weektype = 0 ORDER BY timetable.start_time;")
 		out = cursor.fetchall()
-		out1 = str('метро Октябрьское поле, четная неделя\n\n')
+		out1 = str('Дистанционный режим, четная неделя\n\n')
 		for row in out:
 			for i in range(4):
 				out1 += str(row[i]) + '\n'
@@ -105,7 +297,7 @@ def manipulator(message):
 					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
 					   "teacher.id WHERE timetable.day = 'Среда' AND timetable.weektype = 1 ORDER BY timetable.start_time;")
 		out = cursor.fetchall()
-		out1 = str('метро Октябрьское поле, нечетная неделя\n\n')
+		out1 = str('Дистанционный режим, нечетная неделя\n\n')
 		for row in out:
 			for i in range(4):
 				out1 += str(row[i]) + '\n'
@@ -116,7 +308,7 @@ def manipulator(message):
 					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
 					   "teacher.id WHERE timetable.day = 'Четверг' AND timetable.weektype = 0 ORDER BY timetable.start_time;")
 		out = cursor.fetchall()
-		out1 = str('метро Октябрьское поле, четная неделя\n\n')
+		out1 = str('метро Авиамоторная, четная неделя\n\n')
 		for row in out:
 			for i in range(4):
 				out1 += str(row[i]) + '\n'
@@ -127,7 +319,7 @@ def manipulator(message):
 					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
 					   "teacher.id WHERE timetable.day = 'Четверг' AND timetable.weektype = 1 ORDER BY timetable.start_time;")
 		out = cursor.fetchall()
-		out1 = str('метро Октябрьское поле, нечетная неделя\n\n')
+		out1 = str('метро Авиамоторная, нечетная неделя\n\n')
 		for row in out:
 			for i in range(4):
 				out1 += str(row[i]) + '\n'
@@ -138,7 +330,7 @@ def manipulator(message):
 					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
 					   "teacher.id WHERE timetable.day = 'Пятница' AND timetable.weektype = 0 ORDER BY timetable.start_time;")
 		out = cursor.fetchall()
-		out1 = str('метро Авиамоторная, четная неделя\n\n')
+		out1 = str('метро Октябрьское поле, четная неделя\n\n')
 		for row in out:
 			for i in range(4):
 				out1 += str(row[i]) + '\n'
@@ -149,13 +341,13 @@ def manipulator(message):
 					   "timetable.room_numb, timetable.start_time FROM timetable JOIN teacher ON timetable.teacher = "
 					   "teacher.id WHERE timetable.day = 'Пятница' AND timetable.weektype = 1 ORDER BY timetable.start_time;")
 		out = cursor.fetchall()
-		out1 = str('метро Авиамоторная, нечетная неделя\n\n')
+		out1 = str('метро Октрябрьское поле, нечетная неделя\n\n')
 		for row in out:
 			for i in range(4):
 				out1 += str(row[i]) + '\n'
 			out1 += '\n'
 		bot.send_message(message.chat.id, out1)
 	else:
-		bot.send_message(message.chat.id, 'Не понимаю вас. Введите /help')
+		bot.send_message(message.chat.id, 'Извините, я Вас не понял. Для справки введите /help')
 
 bot.infinity_polling()
